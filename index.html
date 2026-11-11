@@ -95,13 +95,14 @@ input{-webkit-user-select:text;user-select:text;font:inherit}
  <h1>🛍️ Wandas Zauberladen</h1>
  <div class="sub">Kaufe Figuren und Extras – und behalte den Überblick über alle Sammelstücke.</div>
  <div class="stats" id="stats"></div>
- <nav><button id="tL" class="on">🏰 Level</button><button id="tC">🧙 Charaktere</button><button id="tE">📕 Extras</button><button id="tW">🎨 Werkstatt</button><button id="tU">🪄 Zauberstab</button><button id="tP">🐾 Haustiere</button><button id="tA">🏆 Erfolge</button><button id="tO">⚙️ Optionen</button></nav>
+ <nav><button id="tL" class="on">🏰 Level</button><button id="tC">🧙 Charaktere</button><button id="tE">📕 Extras</button><button id="tW">🎨 Werkstatt</button><button id="tU">🪄 Zauberstab</button><button id="tP">🐾 Haustiere</button><button id="tX">🃏 Karten</button><button id="tA">🏆 Erfolge</button><button id="tO">⚙️ Optionen</button></nav>
  <div id="pL" class="grid"></div>
  <div id="pC" class="grid chars" hidden></div>
  <div id="pE" class="grid" hidden></div>
  <div id="pW" hidden style="max-width:760px;margin:0 auto"></div>
  <div id="pU" class="grid" hidden></div>
  <div id="pP" class="grid" hidden></div>
+ <div id="pX" class="grid" hidden></div>
  <div id="pA" class="grid" hidden></div>
  <div id="pO" hidden style="max-width:760px;margin:0 auto"></div>
  <div class="tip">💡 Manche Wappenteile, Schüler und Zauberbücher erreichst du erst, wenn du ein Level später mit neuen Charakteren nochmal spielst. Tippe im Level auf 🔄, um das Charakterrad zu öffnen – dein Partner läuft immer mit.</div>
@@ -412,6 +413,7 @@ const ACH=[
  ['codes','Geheimnisträger','Sprich alle Zauberwörter an der Zaubertafel','📜',1500,()=>[(save.codes||[]).length,CODES.length]],
  ['fount','Klötzchenkünstler','Baue 10 Funkenbrunnen aus Bauklötzchen','⛲',1000,()=>[ST('fountain'),10]],
  ['stars','Sternensammler','Hole alle Sterne in allen Levels','🌠',5000,()=>[totalStars(),NL*3]],
+ ['cards','Kartensammler','Finde alle 12 Sammelkarten','🃏',3000,()=>[(save.cards||[]).length,CARDS.length]],
  ['boss','Bossbezwinger','Besiege den Schattenkönig und Morla','👹',2000,()=>bossesDone()],
  ['stud','Retter der Schüler','Rette alle Schüler','🧑‍🎓',1500,()=>[lvc(l=>l.student),NL]],
  ['book','Bücherwurm','Finde alle Zauberbücher','📕',1500,()=>[lvc(l=>l.book),NL]],
@@ -446,6 +448,22 @@ function renderUp(){const pU=$('#pU');pU.innerHTML='';save.up=save.up||{};
   if(lv>=max){b.className='btn on2';b.textContent='✓ Maximal';b.disabled=true;}
   else{const c=u.cost[lv];b.className='btn main';b.textContent=`Stufe ${lv+1} · ${c.toLocaleString('de-DE')} 💰`;b.disabled=save.coins<c;b.onclick=()=>{initAudio();save.coins-=c;save.up[u.id]=lv+1;persist();fanfare();achCheck();renderShop();};}
   d.querySelector('.tx').appendChild(b);pU.appendChild(d);});}
+const CARDS=[
+ ['Merlina die Kluge','🦉','Erfand den Zauberspruch gegen verlegte Socken. Er funktioniert bis heute – meistens.'],
+ ['Baldur Bücherwurm','📚','Las alle 40.000 Bücher der Bibliothek. Zweimal. Das dritte Mal nur die Bilder.'],
+ ['Gerda Glühwurm','💡','Erleuchtete als Erste den Sternenturm – mit 300 Glühwürmchen und viel Geduld.'],
+ ['Professor Pilzfuß','🍄','Züchtete einen Pilz, der Witze erzählt. Leider nur sehr schlechte.'],
+ ['Ritter Rostig','🛡️','Verteidigte die Akademie 40 Jahre lang. Seine Rüstung quietscht noch heute im Keller.'],
+ ['Hexe Hagebutte','🌹','Ihre Rosen beißen nur, wenn man vergisst, sie zu gießen.'],
+ ['Tobias Tick-Tack','⏰','Baute die Uhrwerk-Eule. Kam trotzdem zu jeder Stunde zu spät.'],
+ ['Kalle Kristall','💎','Fand den ersten Spiegelkristall – in seiner Müslischale.'],
+ ['Spiegel-Sabine','🪞','Sprach 100 Jahre lang nur rückwärts. !raklk znag sad tsi tztej rebA'],
+ ['Frostine Flocke','❄️','Erfand das Eis am Stiel. Aus Versehen. Beim Niesen.'],
+ ['Kapitän Kumulus','☁️','Segelte als Erster zur Wolkeninsel – in einer fliegenden Badewanne.'],
+ ['Astras Tagebuch','📔','„Liebes Tagebuch, heute habe ich eine Schule gegründet. Hoffentlich kommt jemand.“']];
+function renderCards(){const pK=$('#pX');save.cards=save.cards||[];pK.innerHTML='';
+ CARDS.forEach(([n,ic,tx],i)=>{const got=save.cards.includes(i);const d=document.createElement('div');d.className='card ach '+(got?'':'off');
+  d.innerHTML=got?`<div class="ic" style="font-size:40px">${ic}</div><div><b>${n}</b><div class="d">${tx}</div></div>`:`<div class="ic" style="font-size:40px;filter:grayscale(1)">🃏</div><div><b>Karte ${i+1} – ???</b><div class="d">Versteckt in einer Kiste oder Vase in Level ${i+1} („${LEVELS[i]?LEVELS[i].name:''}“). Achte auf das Funkeln!</div></div>`;pK.appendChild(d);});}
 function renderPets(){const pP=$('#pP');pP.innerHTML='';const got=save.pets||[];
  PETS.forEach((pt,i)=>{const has=got.includes(pt.id),on=save.pet===pt.id;const d=document.createElement('div');d.className='card ex';
   d.innerHTML=`<div class="ic ${has?'':'off'}">${has?pt.icon:'🥚'}</div><div class="tx"><b>${has?pt.name:'???'}</b><div>${has?pt.desc:(pt.lv!=='rush'?'Das Zauber-Ei ist in Level '+(pt.lv+1)+' versteckt.':'Schaffe den Boss-Rush.')}</div></div>`;
@@ -667,8 +685,8 @@ function renderShop(){
   d.querySelector('.tx').appendChild(b);pE.appendChild(d);});
  showTab(tab);
 }
-function showTab(t){tab=t;if(t==='A')renderAch();if(t==='O')renderOpt();if(t==='P')renderPets();if(t==='U')renderUp();['L','C','E','W','U','P','A','O'].forEach(k=>{$('#p'+k).hidden=t!==k;$('#t'+k).classList.toggle('on',t===k);});}
-$('#tL').onclick=()=>showTab('L');$('#tC').onclick=()=>showTab('C');$('#tE').onclick=()=>showTab('E');$('#tW').onclick=()=>{renderWS();showTab('W');};$('#tA').onclick=()=>showTab('A');$('#tP').onclick=()=>showTab('P');$('#tU').onclick=()=>showTab('U');$('#tO').onclick=()=>showTab('O');
+function showTab(t){tab=t;if(t==='A')renderAch();if(t==='O')renderOpt();if(t==='P')renderPets();if(t==='U')renderUp();if(t==='X')renderCards();['L','C','E','W','U','P','X','A','O'].forEach(k=>{$('#p'+k).hidden=t!==k;$('#t'+k).classList.toggle('on',t===k);});}
+$('#tL').onclick=()=>showTab('L');$('#tC').onclick=()=>showTab('C');$('#tE').onclick=()=>showTab('E');$('#tW').onclick=()=>{renderWS();showTab('W');};$('#tA').onclick=()=>showTab('A');$('#tP').onclick=()=>showTab('P');$('#tU').onclick=()=>showTab('U');$('#tX').onclick=()=>showTab('X');$('#tO').onclick=()=>showTab('O');
 let draft=null;
 const WCOL=['#7b4dd6','#c8322f','#3fae5a','#2f6fd6','#e0a040','#ff7ab8','#1f6f78','#2b2f5c','#8a5a32','#f4f4fa','#111','#ff8a3d'];
 const WHATS=[['witch','Spitzhut'],['beanie','Mütze'],['cap','Kappe'],['spiky','Stachelhaar'],['hood','Kapuze'],['helmet','Helm'],['flower','Blumenkranz'],['ears','Katzenohren'],['horns','Hörner'],['antenna','Antenne']];
@@ -979,6 +997,7 @@ function load(L,i,pos,opt){
  if(G.daily==='horde')G.en.filter(e=>e!==G.boss).forEach(e=>{const m=mkEnemy(e.x+.35,e.y+.2,e.type);G.en.push(m);});
  if(i>=0&&!G.isHub&&!L.map.some(r=>r.includes('O')||r.includes('*')||r.includes('U'))){let sd=(i+1)*9301;const rnd=()=>{sd=(sd*9301+49297)%233280;return sd/233280;};const cand=[];for(let y=2;y<G.h-2;y++)for(let x=2;x<G.w-2;x++){let ok=true;for(let dy=-1;dy<=1&&ok;dy++)for(let dx=-1;dx<=1;dx++)if(G.grid[y+dy][x+dx]!=='.'){ok=false;break;}if(ok&&!G.pick.some(p=>Math.floor(p.x)===x&&Math.floor(p.y)===y)&&!G.en.some(e=>Math.floor(e.x)===x&&Math.floor(e.y)===y)&&Math.hypot(x+.5-G.sx,y+.5-G.sy)>2&&!(EGGS[i]&&Math.abs(EGGS[i][0]-x)<=1&&Math.abs(EGGS[i][1]-y)<=1))cand.push([x,y]);}
   for(let k=0;k<2&&cand.length;k++){const [x,y]=cand.splice(Math.floor(rnd()*cand.length),1)[0];G.grid[y][x]='¥';for(let q=cand.length-1;q>=0;q--)if(Math.abs(cand[q][0]-x)<4&&Math.abs(cand[q][1]-y)<4)cand.splice(q,1);}}
+ G.cardAt=null;if(i>=0&&i<CARDS.length&&!(save.cards||[]).includes(i)&&!G.daily){const cr=[];G.grid.forEach((r,y)=>r.forEach((c,x)=>{if(c==='c'||c==='v')cr.push([x,y]);}));if(cr.length){let sd=(i+7)*7919%cr.length;G.cardAt=cr[sd];}}
  G.tw=Math.max(50,Math.round(est*.55/50)*50);
  G.decor=[];const DL=DECOR[L.theme];if(DL&&!G.isHub)for(let y=1;y<G.h-1;y++)for(let x=1;x<G.w-1;x++){if(G.grid[y][x]!=='.')continue;for(const[e,pb,sz]of DL)if(Math.random()<pb){G.decor.push({x:x+rand(.2,.8),y:y+rand(.25,.8),e,sz,r:rand(-.4,.4)});break;}}
  if(i>=0&&i<EGGS.length&&!(save.pets||[]).includes(petForLv(i).id)){const[ex,ey]=EGGS[i];G.pick.push({x:ex+.5,y:ey+.5,type:'egg',pet:PETS.indexOf(petForLv(i))});}
@@ -1122,6 +1141,7 @@ function useAbility(b){
  spawnCoins(cx,cy,3);
 }
 function smash(x,y){stat('smash');const ch=G.grid[y][x];G.grid[y][x]='.';const cx=x+.5,cy=y+.5;
+ if(G.cardAt&&G.cardAt[0]===x&&G.cardAt[1]===y){G.cardAt=null;G.pick.push({x:cx,y:cy,type:'card',idx:G.i,t:0});snd(1400,.3,'sine',.07,2200);toast('🃏 Da war etwas in der Kiste versteckt!',2);}
  if(ch==='c'){burst(cx,cy,['#a0703f','#7a5129','#c8945a'],16,4,.16,9,true);noise(.25,.3,1500);}
  else{burst(cx,cy,['#4f8cff','#a8c8ff','#2a4aa0'],16,4,.13,9,true);snd(1800,.15,'triangle',.05,900);noise(.15,.2,4000);}
  spawnCoins(cx,cy,Math.round((3+Math.floor(Math.random()*4))*(petOn('bug')?1.5:1)*(1+.2*upL('luck'))));}
@@ -1329,6 +1349,7 @@ function pause(){if(state!=='play')return;state='pause';
 function collect(p){if(G.isCustom&&p.type!=='coin'&&p.type!=='heart'){fanfare();burst(p.x,p.y,['#7cf','#fff','#ffd84d'],40,4,.15);toast('🧑‍🎓 „Danke für die Rettung!“');return;}
  const s=save.lv[G.i];
  if(p.type==='coin'){const v=p.val*coinMult();stat('earned',v);if(G.isHub){save.coins+=v;persist();}else G.coins+=v;coinSnd();if(p.val>=50)floater(p.x,p.y-.3,'+'+v,coinCol(p.val),14);return;}
+ if(p.type==='card'){save.cards=save.cards||[];if(!save.cards.includes(p.idx))save.cards.push(p.idx);persist();fanfare();burst(p.x,p.y,['#ffd84d','#fff','#c08bff'],40,4,.14,-1);const c=CARDS[p.idx];dialog([['R','🃏 Sammelkarte gefunden: '+c[1]+' '+c[0]+'!'],['R',c[2]+' (Alle Karten findest du in Wandas Laden unter „Karten“.)']]);achCheck();return;}
  if(p.type==='flower'){save.garden=save.garden||[];if(!save.garden.includes(p.id))save.garden.push(p.id);const n=save.garden.length;G.coins+=250;fanfare();burst(p.x,p.y,['#ffd84d','#ff9ad8','#fff','#9dff8a'],50,4,.15,-1);floater(p.x,p.y-.6,'+250','#ffd84d',20);
   if(n>=GTOTAL&&!save.owned.includes(SILVAN)){save.owned.push(SILVAN);persist();G.flash=.6;dialog([['R','Alle Sternenblumen! Seht doch – da hinten zwischen den Hecken …'],[SILVAN,'(Ein leuchtender Hirsch tritt aus dem Gebüsch und verneigt sich vor euch.)'],['R','Der Sternenhirsch Silvan! Er hat sich entschieden, euch zu begleiten.']]);}
   else{persist();toast(`🌼 Sternenblume ${n}/${GTOTAL}!`,2.5);}achCheck();return;}
@@ -1351,7 +1372,7 @@ function collect(p){if(G.isCustom&&p.type!=='coin'&&p.type!=='heart'){fanfare();
 // ================= INPUT =================
 let joy=null,actionDown=false,actionId=null,keys={};
 const OPT=()=>save.opt||(save.opt={btn:1,left:false,sfx:1,mus:1});
-const BTN=()=>{const o=OPT(),k=o.btn,L=o.left;if(!coop){const ax=L?92*k:W-92*k,sx=L?205*k:W-205*k;return{act:{x:ax,y:H-100*k,r:56*k},sw:{x:sx,y:H-62*k,r:38*k},pause:{x:W-40,y:38,r:26},map:{x:W-40,y:96,r:22}};}return BTN0();};
+const BTN=()=>{const o=OPT(),k=o.btn*(Math.min(W,H)<520?.8:1),L=o.left;if(!coop){const ax=L?92*k:W-92*k,sx=L?205*k:W-205*k;return{act:{x:ax,y:H-100*k,r:56*k},sw:{x:sx,y:H-62*k,r:38*k},pause:{x:W-40,y:38,r:26},map:{x:W-40,y:96,r:22}};}return BTN0();};
 const BTN0=()=>coop?{act:{x:W*.39,y:H-78,r:46},sw:{x:W*.39,y:H-178,r:32},act2:{x:W*.61,y:H-78,r:46},sw2:{x:W*.61,y:H-178,r:32},pause:{x:W-40,y:38,r:26},map:{x:W-40,y:96,r:22}}:{act:{x:W-92,y:H-100,r:56},sw:{x:W-205,y:H-62,r:38},pause:{x:W-40,y:38,r:26},map:{x:W-40,y:96,r:22}};
 const dist=(x,y,b)=>Math.hypot(x-b.x,y-b.y);
 function wheelSlots(){const o=teamList(),n=o.length,cx=W/2,cy=H/2,r=Math.min(W,H)*.32;return o.map((ci,i)=>{const a=-Math.PI/2+i/n*TAU;return{ci,x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r,r:Math.min(52,r*.42,Math.PI*r/n*.92)};});}
@@ -1410,6 +1431,7 @@ function update(rdt){
  const am=AMB[G.L.theme];if(am&&!G.isHub&&Math.random()<am[0]*dt*12){const ax=(G.cam.x+Math.random()*W)/TS,ay=(G.cam.y+(am[3]>1?0:Math.random()*H))/TS;part(ax,ay,am[2]*rand(-1,1)+rand(-.1,.1),am[3]+rand(-.1,.1),am[4],am[1],am[5]);}
  if(X_ON(9)&&!G.isHub&&G.L.theme!=='ice'&&Math.random()<dt*20)part((G.cam.x+Math.random()*W)/TS,G.cam.y/TS,rand(-.3,.5),1.3+rand(-.2,.2),3,'#ffffff',.07);
  if(G.daily&&!G.exiting&&G.intro<=0){G.dtime+=dt;if(G.daily==='clock'&&G.dtime>=180){dailyFail();return;}}
+ if(G.cardAt&&Math.random()<dt*1.6)part(G.cardAt[0]+.5+rand(-.3,.3),G.cardAt[1]+.3,0,-.5,.8,'#ffd84d',.05);
  if(G.isSecret&&!G.dialog)G.st+=dt;
  if(G.isBonus)bonusUpdate(dt);if(G.isRush)rushUpdate(dt);if(G.isCustom)G.ct+=dt;
  // partner follows trail
@@ -1779,6 +1801,7 @@ function drawPick(p,sx,sy){const s=TS,bob=Math.sin(t*3+p.x*2)*3;
  else if(p.type==='book'){glow(s0.book?'rgba(255,255,255,.15)':'rgba(255,77,77,.6)');ctx.globalAlpha=s0.book?.45:1;ctx.save();ctx.translate(sx,sy+bob);ctx.rotate(Math.sin(t*2)*.2);icon('📕',0,0,s*.5);ctx.restore();ctx.globalAlpha=1;if(Math.random()<.1)part(p.x+rand(-.3,.3),p.y,0,-.8,.6,'#ffd84d',.07);}
  else if(p.type==='egg'){glow('rgba(255,240,200,.6)');ctx.save();ctx.translate(sx,sy+bob);ctx.rotate(Math.sin(t*6)*.15*(Math.sin(t*1.3)>.6?1:0));icon('🥚',0,0,s*.5);ctx.restore();if(Math.random()<.08)part(p.x+rand(-.3,.3),p.y,0,-.6,.6,'#ffe9a8',.07);}
  else if(p.type==='flower'){glow('rgba(255,216,120,.75)');ctx.save();ctx.translate(sx,sy+bob);ctx.rotate(Math.sin(t*2+p.x)*.25);icon('🌼',0,0,s*.55);ctx.restore();if(Math.random()<.1)part(p.x+rand(-.3,.3),p.y-.2,0,-.6,.7,'#fff3a0',.06);}
+ else if(p.type==='card'){glow('rgba(255,216,77,.8)');ctx.save();ctx.translate(sx,sy+bob);ctx.scale(Math.cos(t*3),1);ctx.fillStyle='#ffd84d';rr(ctx,-s*.18,-s*.25,s*.36,s*.5,5);ctx.fill();ctx.fillStyle='#6a3aa8';rr(ctx,-s*.14,-s*.21,s*.28,s*.42,4);ctx.fill();ctx.restore();icon('✨',sx,sy+bob,s*.22);}
  else if(p.type==='key'){glow('rgba(255,216,77,.7)');ctx.save();ctx.translate(sx,sy+bob);ctx.rotate(Math.sin(t*3)*.3);icon('🗝️',0,0,s*.5);ctx.restore();}
  else if(p.type==='heart'){icon('❤️',sx,sy+bob,s*.4);}
  else if(p.type==='token'){const c=CHARS[G.L.token];glow(s0.token?'rgba(255,255,255,.15)':'rgba(120,200,255,.6)');ctx.save();ctx.translate(sx,sy+bob);ctx.scale(Math.cos(t*2),1);ctx.globalAlpha=s0.token?.5:1;
