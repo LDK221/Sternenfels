@@ -1,0 +1,19 @@
+ZAUBERAKADEMIE STERNENFELS – als App aufs Handy
+
+1) Ordner online stellen (kostenlos, ohne Programmieren):
+   - Am PC https://app.netlify.com/drop öffnen
+   - Den ganzen Ordner "sternenfels" ins Fenster ziehen
+   - Du bekommst eine Adresse wie https://irgendwas.netlify.app
+   (Alternativ: GitHub Pages – Dateien in ein Repo, Pages aktivieren.)
+
+2) Auf dem Handy installieren:
+   - iPhone: Adresse in SAFARI öffnen -> Teilen -> "Zum Home-Bildschirm"
+   - Android: Adresse in Chrome öffnen -> Menü (⋮) -> "App installieren"
+   Danach startet das Spiel wie eine App, im Vollbild, auch offline.
+
+3) Spielstand mitnehmen:
+   Im alten Spiel: Wandas Laden -> Optionen -> Spielstand-Code kopieren.
+   In der App: an derselben Stelle den Code einfügen.
+
+Updates: Wenn du eine neue index.html bekommst, einfach den Ordner
+nochmal hochladen (bei Netlify: "Deploys" -> neuen Ordner reinziehen).
